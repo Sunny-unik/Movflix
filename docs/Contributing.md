@@ -18,8 +18,6 @@ Before contributing, please read the [code of conduct](./code-of-conduct.md) and
 3. Always review your code first. Be sure to run the project locally and test before asking for a review.
 4. Always communicate in the GitHub repository. Whether it is in the issue or the pull request, keeping the lines of communication open and visible to everyone on the team helps everyone around you.
 
-### Applying Lint Styleguide [TODO: update linting instructions according your project]
-
 #### To check the code for linting errors, run the following command
 
 ```shell
@@ -78,5 +76,3 @@ See [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for m
 ## Issues
 
 If you wish to work on an open issue, please get assign yourself to an issue before beginning work on it to avoid conflicts. For assign an issue to yourself comment on the issue `/attempt #issueNumber` to let us know that you want to work on this issue. Maintainer will check that issue is assigned to anyone else if not then maintainer assigned issue to you.
-
-In case you get stuck, please feel free to ask for help in the [Github Discussions](https://github.com/Sunny-unik/Template-repository/discussions/categories/q-a). [TODO: update discussion instructions as per your needs]
