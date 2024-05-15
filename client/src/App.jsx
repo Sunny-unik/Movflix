@@ -8,22 +8,25 @@ import UserRegistration from "./components/UserRegistration.jsx";
 import UserProfile from "./components/UserProfile.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import TopNav from "./components/TopNav.jsx";
+import { UserProvider } from "./UserContext";
 
 function App() {
   return (
     <Router>
-      <div className="container">
-        <TopNav />
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/movie/:id" element={<MovieDetails />} />
-          <Route path="/booking/:id" element={<BookingForm />} />
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/register" element={<UserRegistration />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
-      </div>
+      <UserProvider>
+        <div className="container">
+          <TopNav />
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route path="/movie/:id" element={<MovieDetails />} />
+            <Route path="/booking/:id" element={<BookingForm />} />
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/register" element={<UserRegistration />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/admin" element={<AdminPanel />} />
+          </Routes>
+        </div>
+      </UserProvider>
     </Router>
   );
 }

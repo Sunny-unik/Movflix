@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useUser } from "../UserContext";
 
 const SignupForm = () => {
+  const { signup } = useUser();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("here");
+    signup(email, name, password);
   };
 
   return (

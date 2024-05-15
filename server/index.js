@@ -9,6 +9,8 @@ const movieSchema = require("./models/movieSchema");
 const errorHandler = require("./middleware/errorHandler");
 const fetchMovies = require("./helpers/fetchData");
 const moviesRoutes = require("./routes/movies");
+const usersRoutes = require("./routes/users");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 const app = express();
@@ -16,10 +18,17 @@ const port = process.env.PORT || 4000;
 
 app.use(helmet());
 app.use(bodyParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 connectDB();
 
 app.use("/movie", moviesRoutes);
+app.use("/user", usersRoutes);
 app.post("/insert-movies", async (req, res) => {
   try {
     const data = (await fetchMovies()) || moviesData;
