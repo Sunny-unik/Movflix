@@ -20,7 +20,7 @@ app.use(helmet());
 app.use(bodyParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: JSON.parse(process.env.ALLOWED_ORIGINS),
     credentials: true,
   })
 );
