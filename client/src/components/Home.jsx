@@ -1,11 +1,14 @@
+/* eslint-disable no-undef */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import reactSvg from "../assets/react.svg";
+import getEnvs from "../helpers/getEnvs";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { serverUrl } = getEnvs();
 
   useEffect(() => {
     fetchMovies();
@@ -13,7 +16,7 @@ const Home = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/movie");
+      const response = await axios.get(serverUrl + "/movie");
       setMovies(response.data.data);
       setLoading(false);
     } catch (error) {
