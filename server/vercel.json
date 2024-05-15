@@ -1,0 +1,25 @@
+{
+  "name": "movflix",
+  "version": 2,
+  "builds": [
+    { "src": "index.js", "use": "@vercel/node" },
+    { "src": "assets/**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    {
+      "src": "/((?!.*\\.\\w+$).*)",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/(.+\\.[a-z]+)$",
+      "dest": "/assets/$1"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "master": true,
+      "dev": false,
+      "patch": false
+    }
+  }
+}
