@@ -1,4 +1,6 @@
 const Movie = require("../models/movieSchema");
+const moviesData = require("../db/movies.json");
+const fetchMovies = require("../helpers/fetchData");
 
 const createMovie = async (req, res, next) => {
   try {
@@ -55,10 +57,56 @@ const deleteMovie = async (req, res, next) => {
   }
 };
 
+const feedMovies = async (_, res) => {
+  try {
+    const data = (await fetchMovies()) || moviesData;
+    const insertedMovies = await Movie.insertMany(
+      data.map((o) => getDefaultShowTimings(o))
+    );
+    res.json({ message: "Movies inserted successfully", insertedMovies });
+  } catch (error) {
+    console.error("Error inserting movies:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+function getDefaultShowTimings(movieData) {
+  const startTime = new Date(
+    Date.now() + parseInt(Math.random() * 10) * 24 * 60 * 60 * 1000
+  );
+  const endTime = new Date(
+    +startTime + 120 * 60000 + parseInt(Math.random() * 10) * 60000
+  );
+  const hallsList = [
+    "PVR INOX",
+    "SRS Cinema",
+    "Big Cinemas",
+    "Esquare Talkies",
+    "Cinepolis",
+    "Mukta A2 Cinemas",
+    "SPI Cinemas",
+    "MovieTime Cinemas",
+    "Carnival Cinemas",
+    "Miraj Cinemas",
+  ];
+  const totalSeats = Math.floor(Math.random() * (80 - 50 + 1)) + 50;
+  return {
+    ...movieData,
+    showTimings: {
+      startTime,
+      endTime,
+      hall: hallsList[Math.floor(Math.random() * 10)],
+      totalSeats,
+      bookedSeats: 0,
+    },
+  };
+}
+
 module.exports = {
   createMovie,
   getAllMovies,
   updateMovie,
   deleteMovie,
   getMovie,
+  feedMovies,
 };

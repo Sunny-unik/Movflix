@@ -4,13 +4,11 @@ const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const dotenv = require("dotenv");
 const connectDB = require("./db");
-const moviesData = require("./db/movies.json");
-const movieSchema = require("./models/movieSchema");
 const errorHandler = require("./middleware/errorHandler");
-const fetchMovies = require("./helpers/fetchData");
 const moviesRoutes = require("./routes/movies");
 const usersRoutes = require("./routes/users");
 const cookieParser = require("cookie-parser");
+const { feedMovies } = require("./controllers/movies");
 
 dotenv.config();
 const app = express();
@@ -29,16 +27,7 @@ connectDB();
 
 app.use("/movie", moviesRoutes);
 app.use("/user", usersRoutes);
-app.post("/insert-movies", async (req, res) => {
-  try {
-    const data = (await fetchMovies()) || moviesData;
-    const insertedMovies = await movieSchema.insertMany(data);
-    res.json({ message: "Movies inserted successfully", insertedMovies });
-  } catch (error) {
-    console.error("Error inserting movies:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+app.post("/insert-movies", feedMovies);
 app.get("/health", (_, res) => res.send("ok"));
 
 app.use(errorHandler);

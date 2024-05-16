@@ -12,7 +12,7 @@ const bookingSchema = new mongoose.Schema(
       ref: "Movies",
       required: true,
     },
-    seats: { type: Number, required: true },
+    seats: { type: Array, required: true },
     paymentMethod: {
       type: String,
       enum: ["Credit Card", "Debit Card", "PayPal"],

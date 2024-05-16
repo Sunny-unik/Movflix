@@ -6,6 +6,18 @@ const movieSchema = new mongoose.Schema(
     Type: { type: String, required: true },
     Year: { type: String, required: true },
     Poster: { type: String, require: true },
+    showTimings: {
+      type: [
+        {
+          startTime: { type: Date },
+          endTime: { type: Date },
+          hall: { type: String },
+          totalSeats: { type: Number },
+          bookedSeats: { type: Number },
+        },
+      ],
+      required: true,
+    },
   },
   { timestamps: true }
 );
