@@ -3,8 +3,10 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import reactSvg from "../assets/react.svg";
 import getEnvs from "../helpers/getEnvs";
+import { useUser } from "../UserContext";
 
 const MovieDetails = () => {
+  const { user } = useUser();
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,6 +33,35 @@ const MovieDetails = () => {
     }
   };
 
+  const handleBooking = async ({ target }) => {
+    if (!user) return alert("You need to login first");
+    try {
+      target.innerText = "...loading";
+      const { data } = await axios.post(
+        serverUrl + `/booking`,
+        {
+          movieId: movie._id,
+          showName: target.name,
+          paymentMethod: "PayPal",
+          seats:
+            bookSeats[target.closest("[data-show-index]").dataset.showIndex],
+        },
+        { withCredentials: true }
+      );
+      if (!data.data) throw new Error("Internal Server Error");
+      setMovie(data.data.movie);
+      setBookSeats(Array(data.data.movie.showTimings.length).fill(0));
+      setLoading(false);
+    } catch (error) {
+      const msg = "Error in booking: " + error.message;
+      console.error(msg);
+      setLoading(false);
+      alert(msg);
+    } finally {
+      target.innerText = "Book Now";
+    }
+  };
+
   return (
     <div>
       <h2>Movie Details</h2>
@@ -49,15 +80,19 @@ const MovieDetails = () => {
               alt={movie.Title}
             />
             <div className="px-2 card-body col-lg-6">
-              <h5 className="card-title">{movie.Title}</h5>
+              <h3 className="card-title">{movie.Title}</h3>
               <p className="card-text">
                 Type: {movie.Type} | Year: {movie.Year}
               </p>
               {movie.showTimings.map((show, i) => {
                 return (
-                  <div key={show._id} className="p-3 border rounded text-end">
-                    <h5 className="card-title">At: {show.hall}</h5>
-                    <p className="card-title">
+                  <div
+                    key={show.hall}
+                    className="p-3 border rounded text-end"
+                    data-show-index={i}
+                  >
+                    <h4 className="card-title">At: {show.hall}</h4>
+                    <p className="my-2">
                       Start:&nbsp;
                       {new Date(show.startTime)
                         .toDateString()
@@ -67,7 +102,7 @@ const MovieDetails = () => {
                         " " +
                         new Date(show.startTime).toLocaleTimeString()}
                     </p>
-                    <p className="card-title">
+                    <p className="mb-2">
                       End:&nbsp;
                       {new Date(show.endTime)
                         .toDateString()
@@ -77,9 +112,8 @@ const MovieDetails = () => {
                         " " +
                         new Date(show.endTime).toLocaleTimeString()}
                     </p>
-                    <p>
-                      Booked Seats: {show.bookedSeats}/{show.totalSeats}
-                    </p>
+                    <p className="mb-2">Total Seats: {show.totalSeats}</p>
+                    <p className="mb-2">Booked Seats: {show.bookedSeats}</p>
                     <p>
                       <button
                         className="btn btn-danger"
@@ -100,7 +134,7 @@ const MovieDetails = () => {
                           updatedSeats[i] = bookSeats[i] + 1;
                           setBookSeats(updatedSeats);
                         }}
-                        {...(bookSeats[i] >= show.totalSeats
+                        {...(bookSeats[i] >= show.totalSeats - show.bookedSeats
                           ? { disabled: true }
                           : {})}
                       >
@@ -108,8 +142,10 @@ const MovieDetails = () => {
                       </button>
                     </p>
                     <button
+                      {...(!bookSeats[i] ? { disabled: true } : {})}
+                      name={show.hall}
                       className="btn btn-primary"
-                      to={`/movie/${movie._id}`}
+                      onClick={handleBooking}
                     >
                       Book Now
                     </button>

@@ -7,6 +7,7 @@ const connectDB = require("./db");
 const errorHandler = require("./middleware/errorHandler");
 const moviesRoutes = require("./routes/movies");
 const usersRoutes = require("./routes/users");
+const bookingsRoutes = require("./routes/bookings");
 const cookieParser = require("cookie-parser");
 const { feedMovies } = require("./controllers/movies");
 
@@ -25,6 +26,7 @@ app.use(
 app.use(cookieParser());
 connectDB();
 
+app.use("/booking", bookingsRoutes);
 app.use("/movie", moviesRoutes);
 app.use("/user", usersRoutes);
 app.post("/insert-movies", feedMovies);
