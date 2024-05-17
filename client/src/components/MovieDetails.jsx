@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import reactSvg from "../assets/react.svg";
 import getEnvs from "../helpers/getEnvs";
 import { useUser } from "../UserContext";
+import PaymentModal from "./PaymentModal";
 
 const MovieDetails = () => {
   const { user } = useUser();
@@ -12,6 +13,8 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(true);
   const [bookSeats, setBookSeats] = useState([]);
   const { serverUrl } = getEnvs();
+  const [show, setShow] = useState(false);
+  const selectedPaymentRef = useRef(null);
 
   useEffect(() => {
     fetchMovieDetails();
@@ -33,8 +36,24 @@ const MovieDetails = () => {
     }
   };
 
-  const handleBooking = async ({ target }) => {
+  const handlePayments = ({ target }) => {
     if (!user) return alert("You need to login first");
+    setShow(target);
+  };
+
+  const handleConfirm = () => {
+    if (
+      !["Credit Card", "Debit Card", "PayPal"].includes(
+        selectedPaymentRef.current.value
+      )
+    )
+      return alert("Invalid Payment Method");
+    const target = show;
+    setShow(false);
+    handleBooking(target);
+  };
+
+  const handleBooking = async (target) => {
     try {
       target.innerText = "...loading";
       const { data } = await axios.post(
@@ -42,7 +61,7 @@ const MovieDetails = () => {
         {
           movieId: movie._id,
           showName: target.name,
-          paymentMethod: "PayPal",
+          paymentMethod: selectedPaymentRef.current.value,
           seats:
             bookSeats[target.closest("[data-show-index]").dataset.showIndex],
         },
@@ -69,91 +88,97 @@ const MovieDetails = () => {
         <p>Loading...</p>
       ) : (
         movie && (
-          <div className="row">
-            <img
-              src={
-                movie.Poster === "N/A" || !movie.Poster
-                  ? reactSvg
-                  : movie.Poster
-              }
-              className="col-lg-6"
-              alt={movie.Title}
-            />
-            <div className="px-2 card-body col-lg-6">
-              <h3 className="card-title">{movie.Title}</h3>
-              <p className="card-text">
-                Type: {movie.Type} | Year: {movie.Year}
-              </p>
-              {movie.showTimings.map((show, i) => {
-                return (
-                  <div
-                    key={show.hall}
-                    className="p-3 border rounded text-end"
-                    data-show-index={i}
-                  >
-                    <h4 className="card-title">At: {show.hall}</h4>
-                    <p className="my-2">
-                      Start:&nbsp;
-                      {new Date(show.startTime)
-                        .toDateString()
-                        .split(" ")
-                        .join("/")
-                        .replace("/", " ") +
-                        " " +
-                        new Date(show.startTime).toLocaleTimeString()}
-                    </p>
-                    <p className="mb-2">
-                      End:&nbsp;
-                      {new Date(show.endTime)
-                        .toDateString()
-                        .split(" ")
-                        .join("/")
-                        .replace("/", " ") +
-                        " " +
-                        new Date(show.endTime).toLocaleTimeString()}
-                    </p>
-                    <p className="mb-2">Total Seats: {show.totalSeats}</p>
-                    <p className="mb-2">Booked Seats: {show.bookedSeats}</p>
-                    <p>
-                      <button
-                        className="btn btn-danger"
-                        {...(bookSeats[i] <= 0 ? { disabled: true } : {})}
-                        onClick={() => {
-                          const updatedSeats = [...bookSeats];
-                          updatedSeats[i] = bookSeats[i] - 1;
-                          setBookSeats(updatedSeats);
-                        }}
-                      >
-                        -
-                      </button>
-                      <span className="mx-2">{bookSeats[i]} Seats</span>
-                      <button
-                        className="btn btn-success"
-                        onClick={() => {
-                          const updatedSeats = [...bookSeats];
-                          updatedSeats[i] = bookSeats[i] + 1;
-                          setBookSeats(updatedSeats);
-                        }}
-                        {...(bookSeats[i] >= show.totalSeats - show.bookedSeats
-                          ? { disabled: true }
-                          : {})}
-                      >
-                        +
-                      </button>
-                    </p>
-                    <button
-                      {...(!bookSeats[i] ? { disabled: true } : {})}
-                      name={show.hall}
-                      className="btn btn-primary"
-                      onClick={handleBooking}
+          <>
+            <div className="row">
+              <img
+                src={
+                  movie.Poster === "N/A" || !movie.Poster
+                    ? reactSvg
+                    : movie.Poster
+                }
+                className="col-lg-6"
+                alt={movie.Title}
+              />
+              <div className="px-2 card-body col-lg-6">
+                <h3 className="card-title">{movie.Title}</h3>
+                <p className="card-text">
+                  Type: {movie.Type} | Year: {movie.Year}
+                </p>
+                {movie.showTimings.map((show, i) => {
+                  return (
+                    <div
+                      key={show.hall}
+                      className="p-3 border rounded text-end"
+                      data-show-index={i}
                     >
-                      Book Now
-                    </button>
-                  </div>
-                );
-              })}
+                      <h4 className="card-title">At: {show.hall}</h4>
+                      <p className="my-2">
+                        Start:&nbsp;
+                        {new Date(show.startTime)
+                          .toDateString()
+                          .split(" ")
+                          .join("/")
+                          .replace("/", " ") +
+                          " " +
+                          new Date(show.startTime).toLocaleTimeString()}
+                      </p>
+                      <p className="mb-2">
+                        End:&nbsp;
+                        {new Date(show.endTime)
+                          .toDateString()
+                          .split(" ")
+                          .join("/")
+                          .replace("/", " ") +
+                          " " +
+                          new Date(show.endTime).toLocaleTimeString()}
+                      </p>
+                      <p className="mb-2">Total Seats: {show.totalSeats}</p>
+                      <p className="mb-2">Booked Seats: {show.bookedSeats}</p>
+                      <p>
+                        <button
+                          className="btn btn-danger"
+                          {...(bookSeats[i] <= 0 ? { disabled: true } : {})}
+                          onClick={() => {
+                            const updatedSeats = [...bookSeats];
+                            updatedSeats[i] = bookSeats[i] - 1;
+                            setBookSeats(updatedSeats);
+                          }}
+                        >
+                          -
+                        </button>
+                        <span className="mx-2">{bookSeats[i]} Seats</span>
+                        <button
+                          className="btn btn-success"
+                          onClick={() => {
+                            const updatedSeats = [...bookSeats];
+                            updatedSeats[i] = bookSeats[i] + 1;
+                            setBookSeats(updatedSeats);
+                          }}
+                          {...(bookSeats[i] >=
+                          show.totalSeats - show.bookedSeats
+                            ? { disabled: true }
+                            : {})}
+                        >
+                          +
+                        </button>
+                      </p>
+                      <button
+                        {...(!bookSeats[i] ? { disabled: true } : {})}
+                        name={show.hall}
+                        className="btn btn-primary"
+                        onClick={handlePayments}
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+            <PaymentModal
+              {...{ show, selectedPaymentRef, setShow, handleConfirm }}
+            />
+          </>
         )
       )}
     </div>
