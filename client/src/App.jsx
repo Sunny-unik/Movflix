@@ -9,6 +9,8 @@ import UserProfile from "./components/UserProfile.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import TopNav from "./components/TopNav.jsx";
 import { UserProvider } from "./UserContext";
+import AddMovieForm from "./components/AddMovieForm.jsx";
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (
@@ -24,7 +26,9 @@ function App() {
             <Route path="/register" element={<UserRegistration />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/movie/new" element={<AddMovieForm />} />
           </Routes>
+          <Footer />
         </div>
       </UserProvider>
     </Router>
