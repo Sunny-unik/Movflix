@@ -1,0 +1,19 @@
+.footer-container {
+  background-color: #f8f9fa;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-text {
+  color: #6c757d;
+  margin-bottom: 5px;
+}
+
+.developer-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.developer-link:hover {
+  text-decoration: underline;
+}
