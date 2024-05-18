@@ -57,6 +57,8 @@ const signup = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  console.log(req.decoded);
+  console.log(req.cookies.token);
   res.clearCookie("token").json({ message: "Logout successful" });
 };
 

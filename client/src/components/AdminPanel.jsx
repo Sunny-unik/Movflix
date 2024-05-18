@@ -35,7 +35,9 @@ const AdminPanel = () => {
     const confirmDelete = confirm("Do you want to delete " + name);
     if (!confirmDelete) return;
     try {
-      const { data } = await axios.delete(serverUrl + "/movie/" + movieId);
+      const { data } = await axios.delete(serverUrl + "/movie/" + movieId, {
+        withCredentials: true,
+      });
       if (!data?.message.toLowerCase().includes("success"))
         throw new Error(data?.message || "Internal Server Error");
       alert(data.message);

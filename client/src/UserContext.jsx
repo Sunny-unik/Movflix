@@ -43,6 +43,7 @@ export const UserProvider = ({ children }) => {
       setUser(response.data.data);
       navigate("/");
     } catch (error) {
+      if (error.response.status === 400) return alert("Invalid Credentials");
       console.error("Error logging in:", error);
     }
   };

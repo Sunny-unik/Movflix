@@ -42,10 +42,15 @@ function AddMovieForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const withCredentials = true;
     try {
       const { data } = id
-        ? await axios.put(serverUrl + "/movie/" + id, formData)
-        : await axios.post(serverUrl + "/movie/", formData);
+        ? await axios.put(serverUrl + "/movie/" + id, formData, {
+            withCredentials,
+          })
+        : await axios.post(serverUrl + "/movie/", formData, {
+            withCredentials,
+          });
       if (!data.message.toLowerCase().includes("success"))
         throw new Error(data.error || "Internal server error");
       alert(data.message);
