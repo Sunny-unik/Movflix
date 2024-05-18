@@ -24,6 +24,7 @@ const addBooking = async (req, res, next) => {
       { length: seats },
       () => getIncremented.next().value
     );
+
     const booking = new Booking({
       userId,
       movieId,
@@ -32,6 +33,7 @@ const addBooking = async (req, res, next) => {
     });
     await booking.save();
     currentShow.bookedSeats = currentShow.bookedSeats + seats;
+    currentShow.bookingIds.push(booking._id);
     await movie.save();
     res.send({ message: "Seat booked successfully", data: { booking, movie } });
   } catch (error) {
@@ -40,4 +42,18 @@ const addBooking = async (req, res, next) => {
   }
 };
 
-module.exports = { addBooking };
+const getUserBookings = async (req, res, next) => {
+  try {
+    const bookings = await Booking.find({ userId: req.params.userId }).populate(
+      "movieId"
+    );
+    res.send({
+      data: bookings,
+      message: "Your bookings retrieved successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { addBooking, getUserBookings };

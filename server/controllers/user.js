@@ -14,7 +14,7 @@ const login = async (req, res) => {
     if (!passwordMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    const jwtData = { userId: user._id };
+    const jwtData = { userId: user._id, admin: user.admin };
     const token = jwt.sign(jwtData, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
@@ -57,8 +57,7 @@ const signup = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logout successful" });
+  res.clearCookie("token").json({ message: "Logout successful" });
 };
 
 module.exports = { signup, login, logout };

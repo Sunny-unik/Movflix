@@ -5,6 +5,7 @@ const Booking = require("../models/bookingSchema");
 
 const createMovie = async (req, res, next) => {
   try {
+    if (!req.decoded.admin) return res.status(401).send("Unauthorized");
     const movieData = req.body;
     const movie = new Movie(movieData);
     await movie.save();
@@ -34,6 +35,7 @@ const getMovie = async (req, res, next) => {
 };
 
 const updateMovie = async (req, res, next) => {
+  if (!req.decoded.admin) return res.status(401).send("Unauthorized");
   const { id } = req.params;
   const { Title, Type, Poster, Year } = req.body;
   try {
@@ -49,6 +51,7 @@ const updateMovie = async (req, res, next) => {
 };
 
 const deleteMovie = async (req, res, next) => {
+  if (!req.decoded.admin) return res.status(401).send("Unauthorized");
   const { id } = req.params;
   try {
     const deletedMovie = await Movie.findByIdAndDelete(id);
@@ -103,6 +106,7 @@ function getDefaultShowTimings(movieData) {
       hall: hallsList[Math.floor(Math.random() * 10)],
       totalSeats,
       bookedSeats: 0,
+      bookingIds: [],
     },
   };
 }

@@ -3,6 +3,7 @@ import getEnvs from "../helpers/getEnvs";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
+import reactSvg from "../assets/react.svg";
 
 const AdminPanel = () => {
   const { user } = useUser();
@@ -12,7 +13,6 @@ const AdminPanel = () => {
   const { serverUrl } = getEnvs();
 
   useEffect(() => {
-    console.log(user);
     if (!user || !user.admin) navigate("/");
     else fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,7 +74,11 @@ const AdminPanel = () => {
                     <tr key={movie._id}>
                       <td>
                         <img
-                          src={movie.Poster}
+                          src={
+                            movie.Poster === "N/A" || !movie.Poster
+                              ? reactSvg
+                              : movie.Poster
+                          }
                           alt={movie.Title}
                           height={200}
                           width={150}

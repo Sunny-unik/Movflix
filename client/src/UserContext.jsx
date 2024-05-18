@@ -68,7 +68,7 @@ export const UserProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.get(serverUrl + "/user/logout");
+      await axios.get(serverUrl + "/user/logout", { withCredentials: true });
       setUser(null);
     } catch (error) {
       console.error("Error logging out:", error);

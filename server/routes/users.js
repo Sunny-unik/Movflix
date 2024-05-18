@@ -19,6 +19,6 @@ router.get("/auth", auth, async (req, res, next) => {
 });
 router.post("/signup", signup);
 router.post("/login", login);
-router.get("/logout", logout);
+router.get("/logout", auth, logout);
 
 module.exports = router;

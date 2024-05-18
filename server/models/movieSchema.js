@@ -14,6 +14,7 @@ const movieSchema = new mongoose.Schema(
           hall: { type: String },
           totalSeats: { type: Number },
           bookedSeats: { type: Number },
+          bookingIds: { type: Array },
         },
       ],
       required: true,
