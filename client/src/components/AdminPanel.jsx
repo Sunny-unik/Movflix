@@ -31,6 +31,20 @@ const AdminPanel = () => {
     }
   };
 
+  const handleMovieDelete = async (movieId, name) => {
+    const confirmDelete = confirm("Do you want to delete " + name);
+    if (!confirmDelete) return;
+    try {
+      const { data } = await axios.delete(serverUrl + "/movie/" + movieId);
+      if (!data?.message.toLowerCase().includes("success"))
+        throw new Error(data?.message || "Internal Server Error");
+      alert(data.message);
+      setMovies((movies) => movies.filter((m) => m._id !== movieId));
+    } catch (error) {
+      alert(error.message || "Internal Server Error");
+    }
+  };
+
   return (
     <div className="container">
       <div className="row mb-3">
@@ -70,8 +84,20 @@ const AdminPanel = () => {
                       <td>{movie.Type}</td>
                       <td>{movie.Year}</td>
                       <td>
-                        <button className="btn btn-primary me-2">Edit</button>
-                        <button className="btn btn-danger">Delete</button>
+                        <Link
+                          to={"/admin/movie/edit/" + movie._id}
+                          className="btn btn-primary me-2"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() =>
+                            handleMovieDelete(movie._id, movie.Title)
+                          }
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))}

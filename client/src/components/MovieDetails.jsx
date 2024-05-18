@@ -54,6 +54,7 @@ const MovieDetails = () => {
   };
 
   const handleBooking = async (target) => {
+    if (target.innerText === "...loading") return;
     try {
       target.innerText = "...loading";
       const { data } = await axios.post(
@@ -71,6 +72,7 @@ const MovieDetails = () => {
       setMovie(data.data.movie);
       setBookSeats(Array(data.data.movie.showTimings.length).fill(0));
       setLoading(false);
+      alert(data.message);
     } catch (error) {
       const msg = "Error in booking: " + error.message;
       console.error(msg);

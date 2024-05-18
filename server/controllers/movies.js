@@ -1,6 +1,7 @@
 const Movie = require("../models/movieSchema");
 const moviesData = require("../db/movies.json");
 const fetchMovies = require("../helpers/fetchData");
+const Booking = require("../models/bookingSchema");
 
 const createMovie = async (req, res, next) => {
   try {
@@ -33,12 +34,12 @@ const getMovie = async (req, res, next) => {
 };
 
 const updateMovie = async (req, res, next) => {
-  const { movieId } = req.params;
-  const updatedMovieData = req.body;
+  const { id } = req.params;
+  const { Title, Type, Poster, Year } = req.body;
   try {
     const updatedMovie = await Movie.findByIdAndUpdate(
-      movieId,
-      updatedMovieData,
+      id,
+      { Title, Type, Poster, Year },
       { new: true }
     );
     res.send({ message: "Movie updated successfully", data: updatedMovie });
@@ -48,18 +49,22 @@ const updateMovie = async (req, res, next) => {
 };
 
 const deleteMovie = async (req, res, next) => {
-  const { movieId } = req.params;
+  const { id } = req.params;
   try {
-    const deletedMovie = await Movie.findByIdAndDelete(movieId);
-    res.send({ message: "Movie deleted successfully", data: deletedMovie });
+    const deletedMovie = await Movie.findByIdAndDelete(id);
+    const deletedBookings = await Booking.deleteMany({ movieId: id });
+    res.send({
+      message: "Movie deleted successfully",
+      data: [deletedMovie, deletedBookings],
+    });
   } catch (error) {
     next(error);
   }
 };
 
-const feedMovies = async (_, res) => {
+const feedMovies = async (req, res) => {
   try {
-    const data = (await fetchMovies()) || moviesData;
+    const data = (await fetchMovies(req.body.search)) || moviesData;
     const insertedMovies = await Movie.insertMany(
       data.map((o) => getDefaultShowTimings(o))
     );

@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", getAllMovies);
 router.get("/:id", getMovie);
 router.post("/", createMovie);
-router.put("/", updateMovie);
-router.delete("/", deleteMovie);
+router.put("/:id", updateMovie);
+router.delete("/:id", deleteMovie);
 
 module.exports = router;

@@ -27,6 +27,7 @@ function App() {
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="/admin/movie/new" element={<AddMovieForm />} />
+            <Route path="/admin/movie/edit/:id" element={<AddMovieForm />} />
           </Routes>
           <Footer />
         </div>
