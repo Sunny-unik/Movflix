@@ -31,6 +31,7 @@ app.use("/movie", moviesRoutes);
 app.use("/user", usersRoutes);
 app.post("/insert-movies", feedMovies);
 app.get("/health", (_, res) => res.send("ok"));
+app.get("/", (_, res) => res.send("Hello World!"));
 
 app.use(errorHandler);
 
