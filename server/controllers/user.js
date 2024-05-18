@@ -57,9 +57,14 @@ const signup = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  console.log(req.decoded);
-  console.log(req.cookies.token);
-  res.clearCookie("token").json({ message: "Logout successful" });
+  res
+    .clearCookie("token", {
+      sameSite: "None",
+      secure: true,
+      path: "/",
+      httpOnly: true,
+    })
+    .json({ message: "Logout successful" });
 };
 
 module.exports = { signup, login, logout };
