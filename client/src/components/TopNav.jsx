@@ -46,7 +46,7 @@ const TopNav = () => {
                   </li>
                 )}
                 <li className="nav-item">
-                  <button className="nav-link" onClick={logout}>
+                  <button className="nav-link mx-auto" onClick={logout}>
                     Log-out
                   </button>
                 </li>

@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../UserContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import getEnvs from "../helpers/getEnvs";
 
 function AddMovieForm() {
   const navigate = useNavigate();
   const { user } = useUser();
   const [formData, setFormData] = useState({
-    title: "",
-    type: "",
-    year: "",
-    poster: "",
+    Title: "",
+    Type: "",
+    Year: "",
+    Poster: "",
   });
+  const { serverUrl } = getEnvs();
 
   useEffect(() => {
     if (!user || !user.admin) navigate("/");
@@ -24,15 +27,22 @@ function AddMovieForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted with data:", formData);
-    setFormData({
-      title: "",
-      type: "",
-      year: "",
-      poster: "",
-    });
+    try {
+      const { data } = await axios.post(serverUrl + "/movie/", formData);
+      if (!data.message.toLowerCase().includes("success"))
+        throw new Error(data.error || "Internal server error");
+      alert(data.message);
+      setFormData({
+        Title: "",
+        Type: "",
+        Year: "",
+        Poster: "",
+      });
+    } catch (error) {
+      alert(error.message || "Internal server error, try again later");
+    }
   };
 
   return (
@@ -40,64 +50,62 @@ function AddMovieForm() {
       <h2>Add New Movie</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">
+          <label htmlFor="Title" className="form-label">
             Title
           </label>
           <input
             type="text"
             className="form-control"
-            id="title"
-            name="title"
-            value={formData.title}
+            id="Title"
+            name="Title"
+            value={formData.Title}
             onChange={handleInputChange}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="type" className="form-label">
+          <label htmlFor="Type" className="form-label">
             Type
           </label>
           <input
             type="text"
             className="form-control"
-            id="type"
-            name="type"
-            value={formData.type}
+            id="Type"
+            name="Type"
+            value={formData.Type}
             onChange={handleInputChange}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="year" className="form-label">
+          <label htmlFor="Year" className="form-label">
             Year
           </label>
           <input
             type="text"
             className="form-control"
-            id="year"
-            name="year"
-            value={formData.year}
+            id="Year"
+            name="Year"
+            value={formData.Year}
             onChange={handleInputChange}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="poster" className="form-label">
+          <label htmlFor="Poster" className="form-label">
             Poster
           </label>
           <input
             type="text"
             className="form-control"
-            id="poster"
-            name="poster"
-            value={formData.poster}
+            id="Poster"
+            name="Poster"
+            value={formData.Poster}
             onChange={handleInputChange}
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Submit
-        </button>
+        <button className="btn btn-primary">Submit</button>
       </form>
     </div>
   );
